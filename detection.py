@@ -1,5 +1,6 @@
 import logging
 import cv2 as cv
+import cv2.typing as cvt
 import numpy as np
 from config import COLOR_RANGES
 
@@ -7,7 +8,7 @@ logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s [%(levelname)s] %(message)s")
 
 
-def create_red_mask(frame: np.ndarray) -> np.ndarray:
+def create_red_mask(frame: cvt.MatLike) -> cvt.MatLike:
     red_range = COLOR_RANGES["red"]
     red_mask_1 = cv.inRange(frame, red_range[0][0], red_range[0][1])
     red_mask_2 = cv.inRange(frame, red_range[1][0], red_range[1][1])
@@ -15,13 +16,13 @@ def create_red_mask(frame: np.ndarray) -> np.ndarray:
     return red_mask
 
 
-def create_other_mask(frame: np.ndarray, color: str ) -> np.ndarray:
+def create_other_mask(frame: cvt.MatLike, color: str ) -> cvt.MatLike:
     color_range = COLOR_RANGES[color]
     mask = cv.inRange(frame, color_range[0][0],color_range[0][1])
     return mask
 
 
-def create_mask(frame: np.ndarray, color: set | str) -> np.ndarray | None:
+def create_mask(frame: cvt.MatLike, color: set | str) -> cvt.MatLike:
     mask = None
     if isinstance(color, str):
         if str == "red":
