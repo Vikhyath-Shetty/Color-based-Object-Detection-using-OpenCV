@@ -1,7 +1,7 @@
 import argparse
 from typing import List
 
-# helper to process the color input
+# helper class to process the --color argument
 
 
 class ColorAction(argparse.Action):
@@ -12,4 +12,9 @@ class ColorAction(argparse.Action):
             setattr(namespace, self.dest, set(values))
 
 
-
+# helper function to process the --camera argument
+def camera_type(value):
+    try:
+        return int(value)
+    except ValueError:
+        return value
