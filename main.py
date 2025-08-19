@@ -1,6 +1,6 @@
 import argparse
 from utils import ColorAction, camera_type
-
+from detection import detect_object
 
 def main():
     argparser = argparse.ArgumentParser(prog="Object Detection using color")
@@ -9,7 +9,7 @@ def main():
     argparser.add_argument("--color", nargs='*', choices=["red", "green", "blue", "yellow"],
                            default="red", action=ColorAction, help="Specifies the color(s) of the object(s) to be detected")
     args = argparser.parse_args()
-    print(f"Camera:{args.camera} {type(args.camera)}\n Color:{args.color}  {type(args.color)}")
+    detect_object(args.camera, args.color)
 
 
 if __name__ == "__main__":
