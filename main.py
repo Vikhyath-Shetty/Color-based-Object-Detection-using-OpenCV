@@ -11,14 +11,15 @@ def main():
                            default=["red"], action=ColorAction, help="Specifies the color(s) of the object(s) to be detected")
     args = argparser.parse_args()
     try:
-        print(f"Running color based Object detection task for {args.color}")
+        print(
+            "Running color based Object detection task...\nPress 'q' to exit")
         detect_object(args.camera, args.color)
     except RuntimeError as e:
         print(f"[ERROR]RuntimeError:{e}")
     except Exception as e:
-        print("Something went wrong!")
+        print(f"[ERROR]Unexpected error:{e}")
     finally:
-        print("Color based Object Detecton task has been terminated")
+        print("Task has been terminated!")
 
 
 if __name__ == "__main__":
