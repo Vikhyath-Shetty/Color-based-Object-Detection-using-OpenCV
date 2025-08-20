@@ -6,9 +6,7 @@ from typing import List
 
 class ColorAction(argparse.Action):
     def __call__(self, parser: argparse.ArgumentParser, namespace: argparse.Namespace, values: List[str], option_string: str | None = None) -> None:
-        if len(values) == 0:
-            
-        elif len(values) == 1:
+        if len(values) == 1:
             setattr(namespace, self.dest, values[0])
         else:
             setattr(namespace, self.dest, set(values))
