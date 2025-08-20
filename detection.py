@@ -16,16 +16,16 @@ def create_red_mask(frame: cvt.MatLike) -> cvt.MatLike:
     return red_mask
 
 
-def create_other_mask(frame: cvt.MatLike, color: str ) -> cvt.MatLike:
+def create_other_mask(frame: cvt.MatLike, color: str) -> cvt.MatLike:
     color_range = COLOR_RANGES[color]
-    mask = cv.inRange(frame, color_range[0][0],color_range[0][1])
+    mask = cv.inRange(frame, color_range[0][0], color_range[0][1])
     return mask
 
 
 def create_mask(frame: cvt.MatLike, color: set | str) -> cvt.MatLike:
     mask = None
     if isinstance(color, str):
-        if str == "red":
+        if color == "red":
             mask = create_red_mask(frame)
         else:
             mask = create_other_mask(frame, color)
@@ -52,12 +52,12 @@ def detect_object(cam_src: int | str, color: set | str) -> None:
                 continue
             hsv_frame = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
             mask = create_mask(hsv_frame, color)
-            # result = cv.bitwise_and(frame,frame,mask=mask)
-            cv.imshow("Object Detection",mask)
+            contours, _ = cv.findContours(
+                mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+            cv.drawContours(frame, contours, -1, (0, 255, 0), 2)
+            cv.imshow('Contours', frame)
             if cv.waitKey(1) & 0xFF == ord('q'):
                 break
     finally:
         cap.release()
         cv.destroyAllWindows()
-
-
