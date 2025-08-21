@@ -54,11 +54,14 @@ def detect_object(cam_src: int | str, color: set | str) -> None:
                 continue
             hsv_frame = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
             mask = create_mask(hsv_frame, color)
+            kernal = np.ones((5, 5), np.uint8)
+            morphed_mask = cv.morphologyEx(
+                mask, cv.MORPH_CLOSE, kernal)  # type: ignore
             contours, _ = cv.findContours(
-                mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)  # type: ignore
+                morphed_mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)  # type: ignore
             if contours:
                 x, y, w, h = cv.boundingRect(max(contours, key=cv.contourArea))
-                cv.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv.imshow('Contours', frame)
             if cv.waitKey(1) & 0xFF == ord('q'):
                 break
