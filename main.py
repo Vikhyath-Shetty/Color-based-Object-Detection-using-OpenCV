@@ -9,11 +9,14 @@ def main():
                            help="Specifies the camera source")
     argparser.add_argument("--color", nargs='+', choices=["red", "green", "blue", "yellow"],
                            default=["red"], action=ColorAction, help="Specifies the color(s) of the object(s) to be detected")
+    argparser.add_argument("-n", type=int, default=1,
+                           help="Specifies the limit on, object(s) to be detected at a time")
     args = argparser.parse_args()
+
     try:
         print(
             "Running color based Object detection task...\nPress 'q' to exit")
-        detect_object(args.camera, args.color)
+        detect_object(args.camera, args.color, args.n)
     except RuntimeError as e:
         print(f"[ERROR]RuntimeError:{e}")
     except Exception as e:

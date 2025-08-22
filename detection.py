@@ -3,7 +3,7 @@ import cv2 as cv
 import cv2.typing as cvt
 import numpy as np
 from config import COLOR_RANGES
-
+from type import green, red, blue
 
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s [%(levelname)s] %(message)s")
@@ -40,9 +40,19 @@ def create_mask(frame: cvt.MatLike, color: set | str) -> cvt.MatLike | None:
             mask, temp_mask)
     return mask
 
+# Function to perform morphological operations and get contours
+
+
+def get_contours(mask: cvt.MatLike):
+    kernal = np.ones((5, 5), np.uint8)
+    morphed_mask = cv.morphologyEx(mask, cv.MORPH_CLOSE, kernal)
+    contours, _ = cv.findContours(
+        morphed_mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+    return contours
+
 
 # Function to detect objects
-def detect_object(cam_src: int | str, color: set | str) -> None:
+def detect_object(cam_src: int | str, color: set | str, n: int) -> None:
     cap = cv.VideoCapture(cam_src)
     if not cap.isOpened():
         raise RuntimeError("Cannot open video source")
@@ -54,14 +64,16 @@ def detect_object(cam_src: int | str, color: set | str) -> None:
                 continue
             hsv_frame = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
             mask = create_mask(hsv_frame, color)
-            kernal = np.ones((5, 5), np.uint8)
-            morphed_mask = cv.morphologyEx(
-                mask, cv.MORPH_CLOSE, kernal)  # type: ignore
-            contours, _ = cv.findContours(
-                morphed_mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)  # type: ignore
+            if mask is None:
+                logging.warning("Failed to create mask")
+                continue
+            contours = get_contours(mask)
             if contours:
-                x, y, w, h = cv.boundingRect(max(contours, key=cv.contourArea))
-                cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                selected_contours = sorted(
+                    contours, key=cv.contourArea, reverse=True)[:min(n, len(contours))]
+                for con in selected_contours:
+                    x, y, w, h = cv.boundingRect(con)
+                    cv.rectangle(frame, (x, y), (x + w, y + h), green, 2)
             cv.imshow('Contours', frame)
             if cv.waitKey(1) & 0xFF == ord('q'):
                 break
