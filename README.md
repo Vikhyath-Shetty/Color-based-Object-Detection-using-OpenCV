@@ -33,9 +33,6 @@ uv pip install requirements.txt
 ```bash
 uv run main.py --camera <value> --color <value> -n <value>
 ```
-```bash
- --camera(optional) : 0(default) | file | http 
-```
 ---
 #### FLAGS:
 
